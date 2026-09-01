@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kotemountain - 世界の記憶を、美しく残す</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            vertical-align: middle;
+        }
+
+        header {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .nav-links li {
+            position: relative;
+        }
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            transition: color 0.3s;
+            display: block;
+            padding: 5px 0;
+        }
+        .nav-links a:hover {
+            color: #e74c3c;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            border-radius: 6px;
+            list-style: none;
+            padding: 10px 0;
+            min-width: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 200;
+        }
+        .dropdown-menu li {
+            width: 100%;
+            text-align: center;
+        }
+        .dropdown-menu a {
+            display: block;
+            padding: 8px 15px;
+            font-size: 13px;
+            color: #666;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
+            color: #e74c3c;
+        }
+
+        @media (min-width: 769px) {
+            .dropdown-parent:hover .dropdown-menu {
+                display: block;
+            }
+        }
+        .dropdown-parent.is-open .dropdown-menu {
+            display: block;
+        }
+
+        .hero {
+            position: relative;
+            height: 60vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding: 0 20px;
+            overflow: hidden;
+            transition: display 0.3s ease;
+        }
+        .hero-slides {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        .hero-slide::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4));
+        }
+        .hero-slide.active {
+            opacity: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        .hero-content h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .hero-content p {
+            font-size: 16px;
+            letter-spacing: 0.1em;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 3fr 1fr;
+            }
+        }
+
+        .recommended-section {
+            margin-bottom: 40px;
+        }
+        .recommended-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 600px) {
+            .recommended-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2c3e50;
+            flex-wrap: wrap;
+        }
+
+        .title-left-gallery {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .title-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border: 2px solid #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .title-photo:hover {
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+        .title-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        .post-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        @media (min-width: 600px) {
+            .post-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .post-card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .post-img {
+            height: 200px;
+            overflow: hidden;
+        }
+        .post-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .post-card:hover .post-img img {
+            transform: scale(1.05);
+        }
+        .post-body {
+            padding: 20px;
+        }
+        .post-meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 10px;
+        }
+        .post-category {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .post-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        .post-excerpt {
+            font-size: 14px;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .widget {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .widget-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 5px;
+        }
+        .search-form input[type="search"] {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-form input[type="search"]:focus {
+            border-color: #2c3e50;
+        }
+        .search-form button {
+            padding: 8px 15px;
+            background-color: #2c3e50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .search-form button:hover {
+            background-color: #e74c3c;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+        .category-list li {
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px dashed #eee;
+        }
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+        .category-list a {
+            display: block;
+            transition: color 0.2s;
+        }
+        .category-list a:hover {
+            color: #e74c3c;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo" id="logo">kotemountain</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html" id="nav-home">HOME</a></li>
+                    <li class="dropdown-parent">
+                        <a href="#" class="dropdown-toggle">登山記録</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="month-link" data-month="1">1月</a></li>
+                            <li><a href="#" class="month-link" data-month="2">2月</a></li>
+                            <li><a href="#" class="month-link" data-month="3">3月</a></li>
+                            <li><a href="#" class="month-link" data-month="4">4月</a></li>
+                            <li><a href="#" class="month-link" data-month="5">5月</a></li>
+                            <li><a href="#" class="month-link" data-month="6">6月</a></li>
+                            <li><a href="#" class="month-link" data-month="7">7月</a></li>
+                            <li><a href="#" class="month-link" data-month="8">8月</a></li>
+                            <li><a href="#" class="month-link" data-month="9">9月</a></li>
+                            <li><a href="#" class="month-link" data-month="10">10月</a></li>
+                            <li><a href="#" class="month-link" data-month="11">11月</a></li>
+                            <li><a href="#" class="month-link" data-month="12">12月</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-parent">
+                        <a href="#" class="dropdown-toggle">登山道具</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="gear-link" data-gear-cat="ザック">ザック</a></li>
+                            <li><a href="#" class="gear-link" data-gear-cat="登山靴">登山靴</a></li>
+                            <li><a href="#" class="gear-link" data-gear-cat="レインウェア">レインウェア</a></li>
+                            <li><a href="#" class="gear-link" data-gear-cat="テント">テント</a></li>
+                            <li><a href="#" class="gear-link" data-gear-cat="シュラフ＆寝袋">シュラフ＆寝袋</a></li>
+                            <li><a href="#" class="gear-link" data-gear-cat="バーナー＆クッカー">バーナー＆クッカー</a></li>
+                            <li><a href="#" class="gear-link" data-gear-cat="雪山ギア">雪山ギア</a></li>
+                            <li><a href="#" class="gear-link" data-gear-cat="カメラ">カメラ</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" id="nav-profile">プロフィール</a></li>
+                    <li><a href="#" id="nav-support">ご支援はこちら</a></li>
+                    <li><a href="https://www.instagram.com/kote_mountain1120?igsh=ZDMza2tmYnFvNm1s&utm_source=qr" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                    <li><a href="#" id="nav-contact">お問い合わせ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="hero-visual">
+        <div class="hero-slides">
+            <div class="hero-slide active" style="background-image: url('images/hero.jpg');"></div>
+            <div class="hero-slide" style="background-image: url('images/hero2.jpg');"></div>
+            <div class="hero-slide" style="background-image: url('images/hero3.jpg');"></div>
+        </div>
+        <div class="hero-content">
+            <h1>8000ｍ峰の頂を目指して</h1>
+            <p>世界中の美しい山々とそのたびの記憶</p>
+        </div>
+    </section>
+
+    <div class="container">
+        
+        <main>
+            <section class="recommended-section" id="recommended-section">
+                <div class="section-header">
+                    <h2 class="section-title">おすすめの山</h2>
+                </div>
+                <div class="recommended-grid" id="recommended-grid"></div>
+            </section>
+
+            <div class="section-header">
+                <div class="title-left-gallery" id="title-left-gallery">
+                    <div class="title-photo">
+                        <img src="images/gallery1.jpg" alt="スナップ1" onerror="this.src='https://via.placeholder.com/150/2c3e50/ffffff?text=Photo1'">
+                    </div>
+                    <div class="title-photo">
+                        <img src="images/gallery2.jpg" alt="スナップ2" onerror="this.src='https://via.placeholder.com/150/e74c3c/ffffff?text=Photo2'">
+                    </div>
+                </div>
+                <h2 class="section-title" id="main-section-title">最新の登山記録</h2>
+            </div>
+            
+            <div class="post-grid" id="post-grid"></div>
+
+            <div id="archive-notice" style="margin-top: 25px; font-size: 14px; color: #555; background: #eef2f5; padding: 15px; border-radius: 6px; border-left: 4px solid #2c3e50; line-height: 1.6; display: none;">
+                過去の記録はCATEGORIES、SEARCH、もしくは登山記録の月々の欄から閲覧できます。
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            
+            <div class="widget">
+                <h3 class="widget-title">SEARCH</h3>
+                <form class="search-form" id="search-form">
+                    <input type="search" placeholder="キーワードを入力..." id="search-input">
+                    <button type="submit">検索</button>
+                </form>
+            </div>
+
+            <div class="widget">
+                <h3 class="widget-title">CATEGORIES</h3>
+                <ul class="category-list">
+                    <li><a href="#" class="category-link" data-category="100名山">▶ 100名山 (6)</a></li>
+                    <li><a href="#" class="category-link" data-category="北アルプス">▶ 北アルプス (5)</a></li>
+                    <li><a href="#" class="category-link" data-category="南アルプス">▶ 南アルプス (2)</a></li>
+                    <li><a href="#" class="category-link" data-category="八ヶ岳">▶ 八ヶ岳 (2)</a></li>
+                    <li><a href="#" class="category-link" data-category="中央アルプス">▶ 中央アルプス (3)</a></li>
+                    <li><a href="#" class="category-link" data-category="愛知の山">▶ 愛知の山 (2)</a></li>
+                    <li><a href="#" class="category-link" data-category="静岡の山">▶ 静岡の山 (1)</a></li>
+                    <li><a href="#" class="category-link" data-category="ギア">▶ ギア (5)</a></li>
+                </ul>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 kotemountain. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const allPosts = [
+            {
+                title: "【中央アルプス】山荘バイトの休日トレイル、宝剣山荘から稜線を繋ぐ檜尾岳ピストン山行",
+                date: "2026.07.29",
+                category: "中央アルプス",
+                excerpt: "山荘バイトの貴重な休日を利用して、拠点となる宝剣山荘から檜尾岳へ。中央アルプスの絶景稜線を爽快にピストンしてきました。",
+                image: "images/post_hinokio.jpg",
+                link: "hinokio.html",
+                keywords: ["檜尾岳", "宝剣山荘", "山荘バイト", "ピストン", "中央アルプス"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【中央アルプス】16日間の山荘バイトスタート！最初の3日間で歩く木曽駒ケ岳・宝剣岳・伊那前岳",
+                date: "2026.07.25 - 07.27",
+                category: "中央アルプス",
+                excerpt: "この夏は16日間の山荘バイトに挑戦。その最初の3日間で木曽駒ケ岳や宝剣岳、伊那前岳を巡り、中央アルプスの魅力を体感した記録です。",
+                image: "images/post_kisokoma2026.jpg",
+                link: "kisokoma2026.html",
+                keywords: ["木曽駒ケ岳", "木曽駒", "宝剣岳", "伊那前岳", "山荘バイト", "宝剣山荘"],
+                isHyakumeizan: true
+            },
+            {
+                title: "【静岡】海抜ゼロメートルから日本の頂へ！駿河湾・田子の浦から目指す「ゼロ富士」登山",
+                date: "2026.07.19 - 07.20",
+                category: "静岡の山",
+                excerpt: "富士市田子の浦海岸（海抜0m）からスタートし、自分の足だけで標高3,776mの富士山頂を目指す過酷かつ達成感溢れる「ゼロ富士」に挑戦しました。",
+                image: "images/post_zerofuji.jpg",
+                link: "zero-fuji.html",
+                keywords: ["ゼロ富士", "富士山", "田子の浦", "海抜ゼロ"],
+                isHyakumeizan: true
+            },
+            {
+                title: "【北アルプス】残雪と岩稜の本格トレイル、2度目の西穂独標一泊二日登山",
+                date: "2026.05.04 - 05.05",
+                category: "北アルプス",
+                excerpt: "GW後半を利用して残雪の西穂高岳・独標へ。西穂山荘でのテント泊を経て、ピラミダルな山容が美しい独標の山頂を目指します。",
+                image: "images/post1.jpg",
+                link: "nishiho-dokuhyo.html",
+                keywords: ["西穂独標", "西穂高岳", "西穂", "独標", "西穂山荘"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【愛知】奥三河の名峰、険しい岩場と大パノラマを楽しむ三ツ瀬明神山日帰りタフトレイル",
+                date: "2026.03.29",
+                category: "愛知の山",
+                excerpt: "愛知県東部に位置する明神山へ。馬の背岩やハシゴが連続するスリリングなコースを越え、山頂の展望台から360度の大絶景を堪能しました。",
+                image: "images/post2.jpg",
+                link: "myojin2026.html",
+                keywords: ["三ツ瀬明神山", "明神山", "奥三河"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【愛知】歴史が紡ぐ信仰の山、1425段の石段を登り 新緑 of 鳳来寺山・瑠璃山を歩く",
+                date: "2026.03.22",
+                category: "愛知の山",
+                excerpt: "早春の鳳来寺山へ。表参道の長い石段を一段ずつ踏み締めながら、国の名勝に指定された静寂な境内の森と、その先にある瑠璃山を目指します。",
+                image: "images/post3.jpg",
+                link: "horaijisan2026.html",
+                keywords: ["鳳来寺山", "瑠璃山"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【八ヶ岳】冬の風物詩「アイスキャンディ」がお出迎え、年末の赤岳鉱泉で過ごす雪山年越し山行",
+                date: "2025.12.31",
+                category: "八ヶ岳",
+                excerpt: "大晦日の八ヶ岳、多くの登山者で賑わう赤岳鉱泉へ。厳しい寒さの中にそびえ立つ氷の壁を眺めながら、薪ストーブの暖かい小屋で1年を締めくくります。",
+                image: "images/post4.jpg",
+                link: "akadakekosen2025.html",
+                keywords: ["赤岳鉱泉", "赤岳", "アイスキャンディ"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【北アルプス】標高3,026m of 絶景ロード、秋の乗鞍岳日帰り畳平登山",
+                date: "2025.09.15",
+                category: "北アルプス",
+                excerpt: "乗鞍スカイラインから手軽に3,000m峰の山頂へ。剣ヶ峰から望む北アルプスの大パノラマと、広大な高山帯の絶景を堪能しました。",
+                image: "images/post5.jpg",
+                link: "norikura2025.html",
+                keywords: ["乗鞍岳", "乗鞍", "剣ヶ峰", "畳平"],
+                isHyakumeizan: true
+            },
+            {
+                title: "【北アルプス】天空の滑走路を歩く、夏の双六岳テント泊山行",
+                date: "2025.08.09",
+                category: "北アルプス",
+                excerpt: "新穂高から鏡平を経て双六岳へ。山頂手前に広がる「天空の滑走路」と呼ばれる広大なプラトーから、槍ヶ岳の雄姿を望みます。",
+                image: "images/post6.jpg",
+                link: "sugoroku2025.html",
+                keywords: ["双六岳", "双六", "鏡平"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【南アルプス】南アルプスの女王、美しいカールを抱く仙丈ヶ岳日帰り登山",
+                date: "2025.07.20",
+                category: "南アルプス",
+                excerpt: "2022年台風撤退のリベンジ達成。快晴のもとで富士山、北岳、北アルプスを一望する最高の日帰り山行となりました。",
+                image: "images/post7.jpg",
+                link: "senjo2025.html",
+                keywords: ["仙丈ヶ岳", "仙丈", "北沢峠"],
+                isHyakumeizan: true
+            },
+            {
+                title: "【北アルプス】残雪の岩稜に初めて挑む、GWの西穂独標１泊２日登山",
+                date: "2025.05.03",
+                category: "北アルプス",
+                excerpt: "新穂高ロープウェイから西穂山荘を経て独標へ。アイゼンとピッケルを駆使し、スリリングな岩場を乗り越えて山頂を目指します。",
+                image: "images/post8.jpg",
+                link: "nishiho2025.html",
+                keywords: ["西穂独標", "西穂高岳", "西穂", "独標", "西穂山荘"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【八ヶ岳】標高2,524mの極上展望台、晩秋の編笠山日帰り登山",
+                date: "2024.11.03",
+                category: "八ヶ岳",
+                excerpt: "ゴロゴロとした巨大な岩が広がる山頂を目指して。頂から望む、赤岳をはじめとする八ヶ岳南部の雄姿と、広大な大パノラマをお届けします。",
+                image: "images/post9.jpg",
+                link: "amigasa2024.html",
+                keywords: ["編笠山", "編笠"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【北アルプス】神々の宿る峰、立山三山（雄山・大汝山）を巡る夏の縦走登山",
+                date: "2024.08.12 - 08.13",
+                category: "北アルプス",
+                excerpt: "初めての北アルプス挑戦。長い登坂と稜線歩きの中で「縦走」の楽しさを知り、立山の雄大な景色とテン場の雰囲気を堪能しました。",
+                image: "images/post10.jpg",
+                link: "tateyama2024.html",
+                keywords: ["立山", "立山三山", "雄山", "大汝山", "真砂岳", "別山", "雷鳥沢"],
+                isHyakumeizan: true
+            },
+            {
+                title: "【南アルプス】接近する台風の風を背に受けて。仙丈ヶ岳へと続く美しき稜線、小仙丈ケ岳日帰り登山",
+                date: "2023.08.15",
+                category: "南アルプス",
+                excerpt: "安全を最優先にし、小仙丈ケ岳で引き返す決断。しかし、雲間から顔を出した甲斐駒ヶ岳の鋭い山容と、ダイナミックな気象変化が創り出す絶景に魅了されました。",
+                image: "images/post11.jpg",
+                link: "kosenjyo2023.html",
+                keywords: ["小仙丈ケ岳", "仙丈ヶ岳", "仙丈", "甲斐駒ヶ岳"],
+                isHyakumeizan: false
+            },
+            {
+                title: "【中央アルプス】ロープウェイで雲の上へ！美しき千畳敷カールから登る木曽駒ケ岳",
+                date: "2022.08.28",
+                category: "中央アルプス",
+                excerpt: "千畳敷駅からスタートし、中央アルプス最高峰・木曽駒ケ岳へ。ダイナミックなカール地形、どこまでも広がる青空と白い花々のコントラストを満喫します。",
+                image: "images/post12.jpg",
+                link: "kisokoma2022.html",
+                keywords: ["木曽駒ケ岳", "木曽駒", "千畳敷"],
+                isHyakumeizan: true
+            }
+        ];
+
+        const allGears = [
+            {
+                name: "OSPREY (オスプレー) イーサー 65",
+                category: "ザック",
+                excerpt: "長期のテント泊や縦走、重装備の山行に最適な大型バックパック。優れた荷重分散システムと調節可能なフィット感により、重さを感じさせない最高の背負い心地を実現してくれます。",
+                image: "images/gear_osprey_aether65.jpg",
+                link: "gear-aether65.html"
+            },
+            {
+                name: "MILLET (ミレー) サースフェー 30+5 (SAAS FEE)",
+                category: "ザック",
+                excerpt: "日帰りから一泊の小屋泊まりまでマルチに対応する、登山用バックパックの絶対的定番モデル。抜群のフィット感を誇る背面構造と、各所に配置された収納の抜群の使いやすさが魅力です。",
+                image: "images/gear_millet_saasfee30.jpg",
+                link: "gear-saasfee30.html"
+            },
+            {
+                name: "Caravan (キャラバン) C 1 02S",
+                category: "登山靴",
+                excerpt: "登山入門者からベテランまで幅広く愛される夏用トレッキングシューズの王道モデル。履き口の柔らかさと高いクッション性で長時間の歩行でも足が痛くなりにくく、安心感抜群です。",
+                image: "images/gear_caravan_c102s.jpg",
+                link: "gear-la-sportiva-trango.html"
+            },
+            {
+                name: "LA SPORTIVA (スポルティバ) G-SUMMIT",
+                category: "登山靴",
+                excerpt: "厳冬期の高所登山やテクニカルなアイスクライミングに対応する極限仕様のアルパインブーツ。圧倒的な保温性と抜群の足首可動域を両立した、冬山用ギアの最高峰モデルです。",
+                image: "images/gear_sportiva_gsummit.jpg",
+                link: "gear-la-sportiva-g-summit.html"
+            },
+            {
+                name: "DJI Osmo Action 5 Pro",
+                category: "カメラ",
+                excerpt: "過酷な山岳環境にも耐える強力な防水・耐寒性能と、優れた手ブレ補正を備えたアクションカメラ。ダイナミックな登山シーンや広大な景観を高画質で鮮明に記録できます。",
+                image: "images/gear_dji_osmo_action5pro.jpg",
+                link: "gear-dji-osmo-action5pro.html"
+            }
+        ];
+
+        function displayRecommendedPosts() {
+            const recGrid = document.getElementById('recommended-grid');
+            recGrid.innerHTML = '';
+
+            const recLinks = ['kisokoma2026.html', 'tateyama2024.html', 'sugoroku2025.html'];
+            const recommendedPosts = allPosts.filter(post => recLinks.includes(post.link));
+
+            recommendedPosts.forEach(post => {
+                const article = document.createElement('article');
+                article.classList.add('post-card');
+                article.innerHTML = `
+                    <a href="${post.link}">
+                        <div class="post-img">
+                            <img src="${post.image}" alt="${post.category}">
+                        </div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="post-date">${post.date}</span>
+                                <span class="post-category">${post.category}</span>
+                            </div>
+                            <h3 class="post-title" style="font-size: 16px;">${post.title}</h3>
+                            <p class="post-excerpt">${post.excerpt}</p>
+                        </div>
+                    </a>
+                `;
+                recGrid.appendChild(article);
+            });
+        }
+
+        function displayPosts(type, value = '') {
+            const grid = document.getElementById('post-grid');
+            grid.innerHTML = '';
+            
+            let targetPosts = [];
+            const heroSection = document.getElementById('hero-visual');
+            const sectionTitle = document.getElementById('main-section-title');
+            const archiveNotice = document.getElementById('archive-notice');
+            const gallery = document.getElementById('title-left-gallery');
+            const recSection = document.getElementById('recommended-section');
+
+            if (type === 'all') {
+                targetPosts = allPosts.slice(0, 4);
+                heroSection.style.display = 'flex';
+                recSection.style.display = 'block';
+                gallery.style.display = 'flex';
+                sectionTitle.innerText = '最新の登山記録';
+                archiveNotice.style.display = 'block';
+            } 
+            else if (type === 'search') {
+                const query = value.trim().toLowerCase();
+                
+                targetPosts = allPosts.filter(post => {
+                    const matchTitle = post.title.toLowerCase().includes(query);
+                    const matchCategory = post.category.toLowerCase().includes(query);
+                    
+                    const matchKeywords = post.keywords ? post.keywords.some(kw => {
+                        const targetKw = kw.toLowerCase();
+                        return targetKw.includes(query) || query.includes(targetKw);
+                    }) : false;
+
+                    return matchTitle || matchCategory || matchKeywords;
+                });
+
+                heroSection.style.display = 'none';
+                recSection.style.display = 'none';
+                gallery.style.display = 'none';
+                sectionTitle.innerText = `「${value}」の検索結果 (${targetPosts.length}件)`;
+                archiveNotice.style.display = 'none';
+            } 
+            else if (type === 'category') {
+                if (value === '100名山') {
+                    targetPosts = allPosts.filter(post => post.isHyakumeizan === true);
+                } else {
+                    targetPosts = allPosts.filter(post => post.category === value);
+                }
+                heroSection.style.display = 'none';
+                recSection.style.display = 'none';
+                gallery.style.display = 'none';
+                sectionTitle.innerText = `カテゴリ「${value}」の登山記録 (${targetPosts.length}件)`;
+                archiveNotice.style.display = 'none';
+            } 
+            else if (type === 'month') {
+                const targetMonth = parseInt(value, 10);
+                targetPosts = allPosts.filter(post => {
+                    const firstDate = post.date.split(' - ')[0];
+                    const parts = firstDate.split('.');
+                    if (parts.length >= 2) {
+                        return parseInt(parts[1], 10) === targetMonth;
+                    }
+                    return false;
+                });
+                heroSection.style.display = 'none';
+                recSection.style.display = 'none';
+                gallery.style.display = 'none';
+                sectionTitle.innerText = `${targetMonth}月の登山記録 (${targetPosts.length}件)`;
+                archiveNotice.style.display = 'none';
+            }
+
+            if (targetPosts.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px 0;">該当する登山記録が見つかりませんでした。</p>';
+                return;
+            }
+
+            targetPosts.forEach(post => {
+                const article = document.createElement('article');
+                article.classList.add('post-card');
+                article.innerHTML = `
+                    <a href="${post.link}">
+                        <div class="post-img">
+                            <img src="${post.image}" alt="${post.category}">
+                        </div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="post-date">${post.date}</span>
+                                <span class="post-category">${post.category}</span>
+                            </div>
+                            <h3 class="post-title">${post.title}</h3>
+                            <p class="post-excerpt">${post.excerpt}</p>
+                        </div>
+                    </a>
+                `;
+                grid.appendChild(article);
+            });
+        }
+
+        function displayGears(category) {
+            const grid = document.getElementById('post-grid');
+            grid.innerHTML = '';
+            
+            const heroSection = document.getElementById('hero-visual');
+            const sectionTitle = document.getElementById('main-section-title');
+            const archiveNotice = document.getElementById('archive-notice');
+            const gallery = document.getElementById('title-left-gallery');
+            const recSection = document.getElementById('recommended-section');
+
+            heroSection.style.display = 'none';
+            recSection.style.display = 'none';
+            gallery.style.display = 'none';
+            archiveNotice.style.display = 'none';
+
+            let targetGears = [];
+            if (category === 'all') {
+                targetGears = allGears;
+                sectionTitle.innerText = `愛用の登山道具 (全ギア一覧 - ${targetGears.length}件)`;
+            } else {
+                targetGears = allGears.filter(gear => gear.category === category);
+                sectionTitle.innerText = `登山道具「${category}」の愛用ギア (${targetGears.length}件)`;
+            }
+
+            if (targetGears.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px 0;">該当する登山道具が見つかりませんでした。</p>';
+                return;
+            }
+
+            targetGears.forEach(gear => {
+                const article = document.createElement('article');
+                article.classList.add('post-card');
+                article.innerHTML = `
+                    <a href="${gear.link}" target="${gear.link.startsWith('http') ? '_blank' : '_self'}" rel="${gear.link.startsWith('http') ? 'noopener noreferrer' : ''}">
+                        <div class="post-img">
+                            <img src="${gear.image}" alt="${gear.name}" onerror="this.src='https://via.placeholder.com/400x250/2c3e50/ffffff?text=${encodeURIComponent(gear.category)}';">
+                        </div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="post-category" style="color: #3498db; font-weight: bold;">${gear.category}</span>
+                            </div>
+                            <h3 class="post-title" style="font-size: 17px; margin-bottom: 8px;">${gear.name}</h3>
+                            <p class="post-excerpt">${gear.excerpt}</p>
+                        </div>
+                    </a>
+                `;
+                grid.appendChild(article);
+            });
+        }
+
+        function displayProfile() {
+            const grid = document.getElementById('post-grid');
+            const gallery = document.getElementById('title-left-gallery');
+            const sectionTitle = document.getElementById('main-section-title');
+            
+            gallery.style.display = 'none';
+            document.getElementById('recommended-section').style.display = 'none';
+            
+            grid.innerHTML = `
+                <div class="profile-container" style="grid-column: 1/-1; background: #fff; padding: 40px 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px;">
+                    <div class="profile-img" style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 3px solid #2c3e50;">
+                        <img src="images/profile.jpg" alt="プロフィール写真" onerror="this.src='https://via.placeholder.com/150/2c3e50/ffffff?text=My+Photo';" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="profile-info">
+                        <h3 style="font-size: 22px; color: #2c3e50; margin-bottom: 15px; font-weight: bold;">朝倉 瑚哲</h3>
+                        <p style="font-size: 15px; color: #555; max-width: 600px; margin: 0 auto; line-height: 1.8; text-align: left;">
+                            はじめまして、朝倉 瑚哲（アサクラ コテツ）です！当ブログをご覧いただきありがとうございます。<br><br>
+                            K2の頂を目指して、現在は国内の美しい山々を旅している登山家です。<br>
+                            主に日本アルプスを活動の拠点にしていて、地元愛知の奥深い低山などを歩いています。K2までの記録を1ずつ残しています。<br><br>
+                            山への想いや、相棒となる厳選した登山道具の紹介なども発信していきます。山が好きな方、ぜひ一緒に山の魅力を分かち合いましょう！
+                        </p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('hero-visual').style.display = 'none';
+            sectionTitle.innerText = 'プロフィール';
+            document.getElementById('archive-notice').style.display = 'none';
+        }
+
+        function displayContact() {
+            const grid = document.getElementById('post-grid');
+            const gallery = document.getElementById('title-left-gallery');
+            const sectionTitle = document.getElementById('main-section-title');
+            
+            gallery.style.display = 'none';
+            document.getElementById('recommended-section').style.display = 'none';
+            
+            grid.innerHTML = `
+                <div class="contact-container" style="grid-column: 1/-1; background: #fff; padding: 40px 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 600px; margin: 0 auto; width: 100%;">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <div style="width: 60px; height: 60px; background: #fdf2f2; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #e74c3c; font-size: 28px; margin-bottom: 10px;">
+                            ✉
+                        </div>
+                        <h3 style="font-size: 22px; color: #2c3e50; font-weight: bold;">CONTACT</h3>
+                        <p style="font-size: 14px; color: #666; margin-top: 5px;">ご質問やご依頼は以下のフォームよりお送りください。</p>
+                    </div>
+
+                    <form action="https://formsubmit.co/kotemame0207@gmail.com" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="text" name="_honey" style="display:none">
+
+                        <div>
+                            <label style="display: block; font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 5px;">お名前</label>
+                            <input type="text" name="お名前" required placeholder="山 太郎" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 5px;">返信先メールアドレス</label>
+                            <input type="email" name="email" required placeholder="example@email.com" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 5px;">お問い合わせ内容</label>
+                            <textarea name="お問い合わせ内容" rows="5" required placeholder="お問い合わせ内容をご入力ください" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; resize: vertical;"></textarea>
+                        </div>
+
+                        <button type="submit" style="padding: 12px; background-color: #e74c3c; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
+                            送信する
+                        </button>
+                    </form>
+                </div>
+            `;
+            document.getElementById('hero-visual').style.display = 'none';
+            sectionTitle.innerText = 'お問い合わせ';
+            document.getElementById('archive-notice').style.display = 'none';
+        }
+
+        function initSlideshow() {
+            const slides = document.querySelectorAll('.hero-slide');
+            let currentSlide = 0;
+            const intervalTime = 6000;
+
+            function nextSlide() {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+
+            setInterval(nextSlide, intervalTime);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSlideshow();
+            displayRecommendedPosts();
+
+            const dropdownParents = document.querySelectorAll('.dropdown-parent');
+            dropdownParents.forEach(parent => {
+                const toggle = parent.querySelector('.dropdown-toggle');
+                toggle.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        dropdownParents.forEach(other => {
+                            if (other !== parent) other.classList.remove('is-open');
+                        });
+                        parent.classList.toggle('is-open');
+                    }
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                dropdownParents.forEach(parent => {
+                    if (!parent.contains(e.target)) {
+                        parent.classList.remove('is-open');
+                    }
+                });
+            });
+
+            const categoryLinks = document.querySelectorAll('.category-link');
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const category = link.getAttribute('data-category');
+                    if (category === 'ギア') {
+                        displayGears('all');
+                    } else {
+                        displayPosts('category', category);
+                    }
+                    document.getElementById('main-section-title').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            const monthLinks = document.querySelectorAll('.month-link');
+            monthLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const month = link.getAttribute('data-month');
+                    displayPosts('month', month);
+                    dropdownParents.forEach(p => p.classList.remove('is-open'));
+                    document.getElementById('main-section-title').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            const gearLinks = document.querySelectorAll('.gear-link');
+            gearLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const gearCategory = link.getAttribute('data-gear-cat');
+                    displayGears(gearCategory);
+                    dropdownParents.forEach(p => p.classList.remove('is-open'));
+                    document.getElementById('main-section-title').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            document.getElementById('nav-profile').addEventListener('click', (e) => {
+                e.preventDefault();
+                displayProfile();
+                document.getElementById('main-section-title').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            document.getElementById('nav-support').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('現在は開いていません');
+            });
+
+            document.getElementById('nav-contact').addEventListener('click', (e) => {
+                e.preventDefault();
+                displayContact();
+                document.getElementById('main-section-title').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            const logo = document.getElementById('logo');
+            const homeLink = document.getElementById('nav-home');
+            const resetFormAndShowAll = (e) => {
+                e.preventDefault();
+                document.getElementById('search-input').value = ''; 
+                displayPosts('all');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+            
+            logo.addEventListener('click', resetFormAndShowAll);
+            homeLink.addEventListener('click', resetFormAndShowAll);
+
+            displayPosts('all');
+        });
+
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const queryValue = searchInput.value.trim();
+
+            if (queryValue === "") {
+                alert("入力されていません");
+                return;
+            }
+
+            displayPosts('search', queryValue);
+        });
+    </script>
+
+</body>
+</html>
